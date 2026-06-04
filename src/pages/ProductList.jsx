@@ -5,6 +5,28 @@ function ProductList() {
     // setto var di stato per salvare i prodotti nell'array
     const [products, setProducts] = useState([]);
 
+    // setto var di  stato per gestione search bar inizilmente vuota
+    const [searchBar, setSearchBar] = useState('');
+
+    // setto var di stato per gestione ordimanto + string literal ('none', 'asc' (A-Z), 'desc' (Z-A))
+    const [sortOrder, setSortOrder] = useState('none');
+
+    // funzione per filtrare i prodotti in base al valore della search bar, converto sia il titolo del prodotto che il valore della search bar in minuscolo per rendere la ricerca case-insensitive
+    let filteredProduct = products.filter((product) => {
+        return product.title.toLowerCase().includes(searchBar.toLowerCase())
+    })
+
+    // gestione ordinamento
+    if (sortOrder === 'asc') {
+        // ordino i prodotti in ordine alfabetico in base al titolo, utilizzo localeCompare per confrontare le stringhe
+        filteredProduct = [...filteredProduct].sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortOrder === 'desc') {
+        // ordino i prodotti in ordine inverso in base al titolo
+        filteredProduct = [...filteredProduct].sort((a, b) => b.title.localeCompare(a.title));
+    } else {
+        filteredProduct
+    }
+
     // chiamata api per recuperare i prodotti passandola allo useEffect in modo che venga eseguita al montaggio del componente
     useEffect(() => {
         async function getProducts() {
@@ -34,14 +56,40 @@ function ProductList() {
     return (
         <div>
             <h1>Lista prodotti disponibili</h1>
+            {/* input per la search bar, aggiorna lo stato al cambiamento del valore */}
+            <input
+                type="text"
+                placeholder="Cerca un prodotto"
+                value={searchBar}
+                onChange={(e) => setSearchBar(e.target.value)}>
+            </input>
+
+            {/* creo bottone per ordinare i prodotti in ordine alfabetico */}
+            <button
+                onClick={() => setSortOrder('asc')}
+            >Ordina dalla a alla z
+            </button>
+
+            {/* creo bottone per ordinare i prodotti in ordine inverso */}
+            <button
+                onClick={() => setSortOrder('desc')}
+            >Ordina dalla z alla a
+            </button>
+
+            {/* creo bottone per resettare l'ordinamento */}
+            <button
+                onClick={() => setSortOrder('none')}
+            >Resetta ordinamento
+            </button>
+
             <div>
                 {/* controllo prodotti  */}
-                {products.length === 0 ? (
+                {filteredProduct.length === 0 ? (
                     <p> Nessun prodotto disponibile</p>
                 ) : (
                     <ul>
                         {/* mappo l'array dei prodotti popolata precedentemente */}
-                        {products.map((product) => (
+                        {filteredProduct.map((product) => (
                             <li key={product.id}>
                                 <h2>{product.title}</h2>
                                 <p>{product.category}</p>
@@ -54,5 +102,6 @@ function ProductList() {
         </div>
     )
 }
+
 
 export default ProductList;
