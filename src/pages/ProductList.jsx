@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 function ProductList() {
 
@@ -11,21 +11,27 @@ function ProductList() {
     // setto var di stato per gestione ordimanto + string literal ('none', 'asc' (A-Z), 'desc' (Z-A))
     const [sortOrder, setSortOrder] = useState('none');
 
-    // funzione per filtrare i prodotti in base al valore della search bar, converto sia il titolo del prodotto che il valore della search bar in minuscolo per rendere la ricerca case-insensitive
-    let filteredProduct = products.filter((product) => {
-        return product.title.toLowerCase().includes(searchBar.toLowerCase())
-    })
 
-    // gestione ordinamento
-    if (sortOrder === 'asc') {
-        // ordino i prodotti in ordine alfabetico in base al titolo, utilizzo localeCompare per confrontare le stringhe
-        filteredProduct = [...filteredProduct].sort((a, b) => a.title.localeCompare(b.title));
-    } else if (sortOrder === 'desc') {
-        // ordino i prodotti in ordine inverso in base al titolo
-        filteredProduct = [...filteredProduct].sort((a, b) => b.title.localeCompare(a.title));
-    } else {
-        filteredProduct
-    }
+    // utilizzo usememo per rendere più efficiente il filtraggio e l'ordinamento dei prodotti, in questo modo la funzione viene eseguita solo quando cambia lo stato dei prodotti, della search bar o dell'ordinamento
+    // wrappo la funzione di filtraggio e ordinamento dei prodotti in useMemo
+    const processedProducts = useMemo(() => {
+        // funzione per filtrare i prodotti in base al valore della search bar, converto sia il titolo del prodotto che il valore della search bar in minuscolo per rendere la ricerca case-insensitive
+        let filteredProduct = products.filter((product) => {
+            return product.title.toLowerCase().includes(searchBar.toLowerCase())
+        })
+
+        // gestione ordinamento
+        if (sortOrder === 'asc') {
+            // ordino i prodotti in ordine alfabetico in base al titolo, utilizzo localeCompare per confrontare le stringhe
+            filteredProduct = [...filteredProduct].sort((a, b) => a.title.localeCompare(b.title));
+        } else if (sortOrder === 'desc') {
+            // ordino i prodotti in ordine inverso in base al titolo
+            filteredProduct = [...filteredProduct].sort((a, b) => b.title.localeCompare(a.title));
+        }
+        return filteredProduct;
+    }, [products, searchBar, sortOrder]);
+
+
 
     // chiamata api per recuperare i prodotti passandola allo useEffect in modo che venga eseguita al montaggio del componente
     useEffect(() => {
@@ -84,12 +90,12 @@ function ProductList() {
 
             <div>
                 {/* controllo prodotti  */}
-                {filteredProduct.length === 0 ? (
+                {processedProducts.length === 0 ? (
                     <p> Nessun prodotto disponibile</p>
                 ) : (
                     <ul>
                         {/* mappo l'array dei prodotti popolata precedentemente */}
-                        {filteredProduct.map((product) => (
+                        {processedProducts.map((product) => (
                             <li key={product.id}>
                                 <h2>{product.title}</h2>
                                 <p>{product.category}</p>
