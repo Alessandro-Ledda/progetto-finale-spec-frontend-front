@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { NavLink, } from 'react-router-dom';
 
 function ProductList() {
 
@@ -129,7 +130,7 @@ function ProductList() {
                         {/* mappo l'array dei prodotti popolata precedentemente */}
                         {processedProducts.map((product) => (
                             <li key={product.id}>
-                                <h2>{product.title}</h2>
+                                <h2><NavLink to={`/products/${product.id}`}>{product.title}</NavLink></h2>
                                 <p>{product.category}</p>
                                 <p>{product.description}</p>
                             </li>

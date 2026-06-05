@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import DefaultLayout from './layout/DefaultLayout';
 import ProductList from './pages/ProductList';
+import ProductDetail from './pages/ProductDetail';
 
 function App() {
 
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route element={<DefaultLayout />} />
         <Route path="/" element={<ProductList />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
       </Routes>
     </BrowserRouter>
   )
