@@ -15,7 +15,7 @@ function ProductDetail() {
             try {
                 const productId = Number(id); // converto l'id in numero 
                 // risposta che racchiude il valore del prodotto
-                const response = await fetch(`${endPoint}?id=/${productId}`);
+                const response = await fetch(`${endPoint}?id=${productId}`);
                 // ulteriore controllo
                 if (!response.ok) {
                     throw new Error('Errore nella chiamata API');

@@ -15,6 +15,12 @@ function ProductList() {
     // setto var di stato per filtraggio per categoria, inilmente vuota o 'all' per mostrare tutte le categorie, quando l'utente seleziona una categoria specifica aggiorno lo stato con il valore selezionato 
     const [categories, setCategories] = useState('all');
 
+    // setto var di stato per confrontare due prodotti del list stato
+    const [compareProducts, setCompareProducts] = useState([]);
+
+    // setto var di stato per gestione modale di confronto
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
 
     // esstraggo dinamicamente le categorie uniche dai prodotti, utilizzo Set per ottenere solo valori unici e spread operator per trasformare il Set in un array
     const uniqueCategory = useMemo(() => {
@@ -82,6 +88,37 @@ function ProductList() {
         getProducts();
     }, []);
 
+    // funzione per la gestione del click sul tasto confronta
+    const handleCompareClick = (product) => {
+        // se il prodotto è gia esistente lo togliamo
+        const isAlreadyCompared = compareProducts.some((p) => p.id === product.id);
+
+        if (isAlreadyCompared) {
+            setCompareProducts(compareProducts.filter((p) => p.id !== product.id));
+        } else {
+            // Controlliamo prima se l'array ha già raggiunto il limite di 2 prodotti
+            if (compareProducts.length >= 2) {
+                alert("Puoi confrontare solamente due prodotti per volta");
+                return; // Blocca l'esecuzione qui senza aggiungere altro
+            }
+
+            // Se c'è spazio (lunghezza 0 o 1), aggiungiamo il prodotto
+            const updateList = [...compareProducts, product];
+            setCompareProducts(updateList);
+
+            // Se con questa aggiunta arriviamo ESATTAMENTE a due prodotti, apriamo la modale
+            if (updateList.length === 2) {
+                setIsModalOpen(true);
+            }
+        }
+    };
+
+    // setto funzione per il reset della comparazione dei prodotti
+    const closeCompareModal = () => {
+        setIsModalOpen(false);
+        setCompareProducts([]);
+    }
+
     return (
         <div>
             <h1>Lista prodotti disponibili</h1>
@@ -128,19 +165,77 @@ function ProductList() {
                 ) : (
                     <ul>
                         {/* mappo l'array dei prodotti popolata precedentemente */}
-                        {processedProducts.map((product) => (
-                            <li key={product.id}>
-                                <h2><NavLink to={`/products/${product.id}`}>{product.title}</NavLink></h2>
-                                <p>{product.category}</p>
-                                <p>{product.description}</p>
-                            </li>
-                        ))}
+                        {processedProducts.map((product) => {
+                            // verifica se questo specifico prodotto è stato selezionato
+                            const isSelected = compareProducts.some((p) => p.id === product.id);
+                            return (
+                                <li key={product.id}>
+                                    <h2><NavLink to={`/products/${product.id}`}>{product.title}</NavLink></h2>
+                                    <p>Categoria: {product.category}</p>
+                                    <p>Description: {product.description}</p>
+                                    <p>Prezzo: {product.price}</p>
+
+                                    {/* creazione bottone per evnto*/}
+                                    <button
+                                        className="btn"
+                                        onClick={() => handleCompareClick(product)}
+                                        style={{ backgroundColor: isSelected ? '#4caf50' : '#008cba', }}
+                                    >
+                                        {isSelected ? 'Selezionato' : 'Confronta'}
+                                    </button>
+                                </li>
+                            )
+                        })}
                     </ul>
                 )}
             </div>
+
+
+            {/* struttura pop up(tabella di confronto)*/}
+            {isModalOpen && compareProducts.length === 2 && (
+                <div className='wrapper'>
+                    <div className='wrap'>
+                        <button
+                            className='modal-button'
+                            onClick={closeCompareModal}
+                        ></button>
+                        <h2>Confronta i tuoi prodotti</h2>
+
+                        {/* creazione tabella di confronto */}
+                        <table>
+                            <thead>
+                                <tr className='table-modal-tr'>
+                                    <th className='table-modal-th'>Caratteristica</th>
+                                    <th className='table-modal-th'>{compareProducts[0].title}</th>
+                                    <th className='table-modal-th'>{compareProducts[1].title}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td className='table-modal-td'>Categoria</td>
+                                    <td className='table-modal-td-head'>{compareProducts[0].category}</td>
+                                    <td className='table-modal-td'>{compareProducts[1].category}</td>
+                                </tr>
+
+                                <tr>
+                                    <td className='table-modal-description'>descrizione</td>
+                                    <td className='table-modal-td-head'>{compareProducts[0].description}</td>
+                                    <td className='table-modal-td'>{compareProducts[1].description}</td>
+                                </tr>
+                                <tr>
+                                    <td className='table-modal-price'>Prezzo</td>
+                                    <td className='table-modal-td-head'>{compareProducts[0].price}</td>
+                                    <td className='table-modal-td'>{compareProducts[1].price}</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
         </div>
+
     )
 }
-
 
 export default ProductList;
