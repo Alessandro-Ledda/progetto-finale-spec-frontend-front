@@ -1,0 +1,162 @@
+/* --- LISTA PRODOTTI (GRIGLIA) --- */
+ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    list-style: none;
+    padding: 20px 0;
+    margin: 0;
+}
+
+li {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* --- PULSANTI IN LISTA --- */
+.btn {
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: auto;
+    /* Spinge il bottone sempre in fondo alla card */
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+/* --- MODALE (IL WRAPPER ESTERNO) --- */
+.wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Sfondo scuro semi-trasparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    /* Forza la modale a stare SOPRA a tutto il resto */
+    backdrop-filter: blur(4px);
+    /* Effetto sfocatura moderno sullo sfondo */
+}
+
+/* --- IL CONTENITORE DELLA MODALE --- */
+.wrap {
+    background-color: #ffffff;
+    padding: 40px 30px 30px 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 650px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    color: #333333;
+    /* Forza il testo scuro leggibile */
+    animation: modalFadeIn 0.3s ease;
+    /* Piccola animazione di apertura */
+}
+
+/* --- PULSANTE DI CHIUSURA (La "X" della Modale) --- */
+.modal-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.modal-button::before {
+    content: "x";
+    /* Inserisce una X visibile dentro il bottone vuoto */
+    color: #666;
+    font-size: 16px;
+}
+
+.modal-button:hover {
+    background-color: #e0e0e0;
+}
+
+/* --- TABELLA DI CONFRONTO --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    background: #ffffff;
+}
+
+.table-modal-tr {
+    background-color: #f8f9fa;
+}
+
+.table-modal-th {
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+    text-align: left;
+    background-color: #edf2f7;
+    color: #2d3748;
+    font-weight: 700;
+}
+
+.table-modal-td,
+.table-modal-td-head,
+.table-modal-description,
+.table-modal-price {
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+    color: #4a5568;
+    vertical-align: top;
+}
+
+.table-modal-td-head {
+    font-weight: 600;
+}
+
+.table-modal-description {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.table-modal-price {
+    color: #2f855a;
+    /* Un verde più elegante */
+    font-weight: 700;
+}
+
+/* bottone preferiti */
+.product-heart {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.btn-heart {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #ff4757;
+    padding: 5px;
+}

@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { NavLink, } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart } from '@fortawesome/free-solid-svg-icons';
 
 function ProductList() {
 
@@ -20,6 +22,9 @@ function ProductList() {
 
     // setto var di stato per gestione modale di confronto
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // setto var di stato per gestione preferiti
+    const [isFavorites, setIsFavorites] = useState([]);
 
 
     // esstraggo dinamicamente le categorie uniche dai prodotti, utilizzo Set per ottenere solo valori unici e spread operator per trasformare il Set in un array
@@ -119,6 +124,19 @@ function ProductList() {
         setCompareProducts([]);
     }
 
+    // logica preferiti, funzione toggle(se true diventa false o viceverse)
+    const handleFavoriteClick = (id) => {
+        setIsFavorites((prevIds) => {
+            if (prevIds.includes(id)) {
+                // se è presente lo rimoviamo
+                return prevIds.filter((favId) => favId !== id);
+            } else {
+                // se non c'è lo aggiungiamo
+                return [...prevIds, id];
+            }
+        });
+    }
+
     return (
         <div>
             <h1>Lista prodotti disponibili</h1>
@@ -170,7 +188,23 @@ function ProductList() {
                             const isSelected = compareProducts.some((p) => p.id === product.id);
                             return (
                                 <li key={product.id}>
-                                    <h2><NavLink to={`/products/${product.id}`}>{product.title}</NavLink></h2>
+                                    <div className='product-heart'>
+                                        <h2>
+                                            <NavLink to={`/products/${product.id}`}>{product.title}</NavLink>
+                                        </h2>
+                                        <button
+                                            className='btn-heart'
+                                            onClick={() => handleFavoriteClick(product.id)}>
+                                            {isFavorites.includes(product.id) ? (
+                                                <FontAwesomeIcon icon={faHeart} color="red" />
+                                            ) : (
+                                                <FontAwesomeIcon icon={faHeart} color="grey" />
+                                            )}
+
+
+                                        </button>
+                                    </div>
+
                                     <p>Categoria: {product.category}</p>
                                     <p>Description: {product.description}</p>
                                     <p>Prezzo: {product.price}</p>
@@ -236,6 +270,6 @@ function ProductList() {
         </div>
 
     )
-}
 
+}
 export default ProductList;
